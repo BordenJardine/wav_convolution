@@ -1,4 +1,3 @@
-use std::collections::VecDeque;
 use std::env;
 
 mod convolution;
@@ -17,23 +16,23 @@ fn main() {
     write_wav(out, output_file);
 }
 
-fn write_wav(buffer: &[f32], file_name: &str) {
+fn write_wav(buffer: &[i128], file_name: &str) {
   let spec = hound::WavSpec {
     channels: 1,
     sample_rate: 44100,
-    bits_per_sample: 32,
-    sample_format: hound::SampleFormat::Float
+    bits_per_sample: 16,
+    sample_format: hound::SampleFormat::Int
   };
   let mut writer = hound::WavWriter::create(file_name, spec).unwrap();
 
   for sample in buffer {
-    writer.write_sample(*sample).unwrap();
+    writer.write_sample(*sample as i16).unwrap();
   }
 }
 
-pub fn load_wav(file_name: &str) -> Vec<f32> {
+pub fn load_wav(file_name: &str) -> Vec<i16> {
   println!("loading: {}", file_name);
   let mut reader = hound::WavReader::open(file_name).unwrap();
-  let samples: Vec<f32> = reader.samples().map(|s| s.unwrap()).collect();
+  let samples: Vec<i16> = reader.samples().map(|s| s.unwrap()).collect();
   samples
 }
